@@ -120,12 +120,10 @@ import {
 } from "@/api/busArticle";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/data";
 import infoList from "@/components/mixins/infoList";
-import formData from "./formData";
 
 export default {
   name: "BusArticle",
   mixins: [infoList],
-  components: { formData },
   data() {
     return {
       listApi: getBusArticleList,
