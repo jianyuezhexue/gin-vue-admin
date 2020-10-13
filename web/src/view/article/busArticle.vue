@@ -6,7 +6,7 @@
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增busArticle表</el-button>
+          <el-button @click="openDialog" type="primary">新增</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -38,7 +38,7 @@
     
     <el-table-column label="文章描述" prop="desc" width="120"></el-table-column> 
     
-    <el-table-column label="作者id" prop="author" width="120"></el-table-column> 
+    <el-table-column label="作者ID" prop="author" width="120"></el-table-column> 
     
     <el-table-column label="文章内容" prop="content" width="120"></el-table-column> 
     
@@ -70,37 +70,9 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="表单操作">
       <!-- 此处请使用表单生成器生成form填充 表单默认绑定 formData 如手动修改过请自行修改key -->
-      <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px">
-      <el-form-item label="文章标题" prop="title">
-        <el-input v-model="formData.title" placeholder="请输入文章标题" clearable :style="{width: '100%'}">
-        </el-input>
-      </el-form-item>
-      <el-form-item label="文章描述" prop="desc">
-        <el-input v-model="formData.desc" placeholder="请输入文章描述" clearable :style="{width: '100%'}"></el-input>
-      </el-form-item>
-      <el-form-item label="选择作者" prop="author">
-        <el-select v-model="formData.author" placeholder="请选择选择作者" clearable :style="{width: '100%'}">
-          <el-option v-for="(item, index) in authorOptions" :key="index" :label="item.label"
-            :value="item.value" :disabled="item.disabled"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="文章内容" prop="content">
-        <el-input v-model="formData.content" type="textarea" placeholder="请输入文章内容"
-          :autosize="{minRows: 4, maxRows: 4}" :style="{width: '100%'}"></el-input>
-      </el-form-item>
-      <el-form-item label="选择标签" prop="tag">
-        <el-select v-model="formData.tag" placeholder="请选择选择标签" clearable :style="{width: '100%'}">
-          <el-option v-for="(item, index) in tagOptions" :key="index" :label="item.label" :value="item.value"
-            :disabled="item.disabled"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item size="large">
-        <el-button type="primary" @click="enterDialog">提交</el-button>
-        <el-button @click="resetForm">重置</el-button>
-      </el-form-item>
-    </el-form>
+      <formTable :formData="formData" :authorOptions="authorOptions" :tagOptions="tagOptions"></formTable>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
@@ -120,10 +92,12 @@ import {
 } from "@/api/busArticle";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/data";
 import infoList from "@/components/mixins/infoList";
+import formTable from "./formTable.vue";
 
 export default {
   name: "BusArticle",
   mixins: [infoList],
+  components: {formTable},
   data() {
     return {
       listApi: getBusArticleList,
@@ -131,9 +105,30 @@ export default {
       visible: false,
       type: "",
       deleteVisible: false,
-      multipleSelection: [],formData: {
-        title:null,desc:null,author:null,content:null,tag:null,
-      }
+      multipleSelection: [],
+      formData: {
+        title:null,desc:null,author:null,content:null,tag:[],
+      }, 
+      authorOptions: [
+        {
+          label: "选项一",
+          value: 1,
+        },
+        {
+          label: "选项二",
+          value: 2,
+        },
+      ],
+      tagOptions: [
+        {
+          label: "选项一",
+          value: 1,
+        },
+        {
+          label: "选项二",
+          value: 2,
+        },
+      ],
     };
   },
   filters: {
@@ -190,12 +185,11 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-        
           title:null,
           desc:null,
           author:null,
           content:null,
-          tag:null,
+          tag:[],
       };
     },
     async deleteBusArticle(row) {
@@ -210,6 +204,7 @@ export default {
       }
     },
     async enterDialog() {
+      this.formData.tag = JSON.stringify(this.formData.tag);
       let res;
       switch (this.type) {
         case "create":
@@ -237,7 +232,10 @@ export default {
     }
   },
   async created() {
-    await this.getTableData();}
+    await this.getTableData();
+    await this.getDict("author");
+    await this.getDict("tag");
+  }
 };
 </script>
 
