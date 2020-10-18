@@ -5,6 +5,7 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
+
 	"gorm.io/gorm"
 )
 
@@ -69,6 +70,18 @@ func UpdateSysDictionary(sysDictionary *model.SysDictionary) (err error) {
 
 func GetSysDictionary(Type string, Id uint) (err error, sysDictionary model.SysDictionary) {
 	err = global.GVA_DB.Where("type = ? OR id = ?", Type, Id).Preload("SysDictionaryDetails").First(&sysDictionary).Error
+	return
+}
+
+// @title    GetSysDictionary
+// @description   get the info of a SysDictionary
+// @auth                     （2020/04/05  20:22）
+// @param     id              uint
+// @return                    error
+// @return    SysDictionary        SysDictionary
+
+func GetSysDictionaryByType(Type string) (err error, sysDictionary model.SysDictionary) {
+	err = global.GVA_DB.Where("type = ?", Type).Preload("SysDictionaryDetails").First(&sysDictionary).Error
 	return
 }
 

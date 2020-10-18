@@ -38,11 +38,11 @@
     
     <el-table-column label="文章描述" prop="desc" width="120"></el-table-column> 
     
-    <el-table-column label="作者ID" prop="author" width="120"></el-table-column> 
+    <el-table-column label="作者" prop="authorName" width="120"></el-table-column> 
     
     <el-table-column label="文章内容" prop="content" width="120"></el-table-column> 
     
-    <el-table-column label="文章标签" prop="tag" width="120"></el-table-column> 
+    <el-table-column label="文章标签" prop="tagNames" width="120"></el-table-column> 
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">

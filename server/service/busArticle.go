@@ -35,7 +35,7 @@ func DeleteBusArticle(busArticle model.BusArticle) (err error) {
 // @return                    error
 
 func DeleteBusArticleByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.BusArticle{},"id in ?",ids.Ids).Error
+	err = global.GVA_DB.Delete(&[]model.BusArticle{}, "id in ?", ids.Ids).Error
 	return err
 }
 
@@ -71,11 +71,16 @@ func GetBusArticle(id uint) (err error, busArticle model.BusArticle) {
 func GetBusArticleInfoList(info request.BusArticleSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
+	// 创建db
 	db := global.GVA_DB.Model(&model.BusArticle{})
-    var busArticles []model.BusArticle
-    // 如果有条件搜索 下方会自动创建搜索语句
+	var busArticles []model.BusArticle
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&busArticles).Error
+
+	// 标签处理(字符串转数组)
+	// for _, value := range busArticles {
+	// 	value.Tag = value.Tag
+	// }
 	return err, busArticles, total
 }
