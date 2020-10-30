@@ -38,11 +38,16 @@
     
     <el-table-column label="文章描述" prop="desc" width="120"></el-table-column> 
     
-    <el-table-column label="作者" prop="authorName" width="120"></el-table-column> 
+    <el-table-column label="作者" width="120">
+         <template slot-scope="scope">{{scope.row.author|formatAuthor}}</template>
+    </el-table-column> 
     
     <el-table-column label="文章内容" prop="content" width="120"></el-table-column> 
     
-    <el-table-column label="文章标签" prop="tagNames" width="120"></el-table-column> 
+    <!-- <el-table-column label="文章标签" prop="tagNames" width="120"></el-table-column> -->
+    <el-table-column label="文章标签" width="120">
+         <template slot-scope="scope">{{scope.row.tag|formatTag}}</template>
+    </el-table-column>  
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -93,7 +98,7 @@ import {
 import { formatTimeToStr } from "@/utils/data";
 import infoList from "@/components/mixins/infoList";
 import formTable from "./formTable.vue";
-
+var that;
 export default {
   name: "BusArticle",
   mixins: [infoList],
@@ -146,7 +151,20 @@ export default {
       } else {
         return "";
       }
-    }
+    },
+    formatAuthor:function(id){
+      let author = that.authorOptions.find(item => item.value == id)
+      return author.label
+    },
+    formatTag:function(str){
+      let ids = JSON.parse(str)
+      let tags = that.tagOptions.filter(item => ids.indexOf(item.value) != -1)
+      let tagNames = ""
+      tags.forEach(item => {
+        tagNames += item.label + "," 
+      })
+      return tagNames.substring(0,tagNames.length-1)
+    },
   },
   methods: {
       //条件搜索前端看此方法
@@ -232,9 +250,10 @@ export default {
     }
   },
   async created() {
-    await this.getTableData();
+    that = this;
     await this.getDict("author");
     await this.getDict("tag");
+    await this.getTableData();
   }
 };
 </script>
