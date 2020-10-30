@@ -28,3 +28,4 @@ go.sum
 
 *.iml
 /web/package-lock.json
+web/debug.log
